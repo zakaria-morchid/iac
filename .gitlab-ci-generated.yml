@@ -19,7 +19,7 @@ create-gitlab:
 job-template-launch:
   stage: launch Vault project
   when: manual
-  allow_failure: true
+  allow_failure: false
   script:
   - infra run infra.yml --step job-template-launch --dry-run
   artifacts:

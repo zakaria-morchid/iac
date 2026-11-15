@@ -18,7 +18,7 @@ steps:
     name: launch Vault project
     action: awx:job-template:launch
     manual: true
-    allow_failure: true
+    allow_failure: false
     enabled: true
     inputs:
       job_template: "vault-job-template"

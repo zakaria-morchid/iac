@@ -150,6 +150,8 @@ Le manifeste contient au moins une étape. Les champs inconnus sont refusés au 
 
 Les options `manual` et `allow_failure` contrôlent le comportement GitLab CI. Une commande locale `infra run` lance directement l’étape sélectionnée.
 
+Pour qu’une étape manuelle bloque les stages suivants jusqu’à son lancement et sa réussite, utilisez `manual: true` avec `allow_failure: false`. Avec `manual: true` et `allow_failure: true`, le job est optionnel et les stages suivants peuvent démarrer sans son exécution. Le manifeste fourni configure les deux étapes manuelles comme bloquantes.
+
 ## Variables et outputs
 
 Les expressions peuvent utiliser les variables de `global`, les variables d’environnement via `env` et les outputs d’une étape, identifiée par son `id`.
