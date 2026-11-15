@@ -1,0 +1,41 @@
+global:
+  env: dev
+
+steps:
+  - id: create-gitlab
+    name: Create GitLab project
+    action: gitlab:pipeline:trigger
+    manual: true
+    allow_failure: false
+    enabled: true
+    inputs:
+      projectId: 456
+      branch: main
+      variables:
+        ENV: ${{ global.env }}
+
+  - id: job-template-launch
+    name: launch Vault project
+    action: awx:job-template:launch
+    manual: true
+    allow_failure: true
+    enabled: true
+    inputs:
+      job_template: "vault-job-template"
+      inventory: "vault-inventory"
+      extra_vars:
+        env: "{{ global.env }}"
+        vault: test
+
+  - id: message_1
+    name: test
+    action: example:echo
+    inputs:
+      message: Bonjour
+
+  - id: message_2
+    name: test
+    action: example:echo
+    inputs:
+      region: ${{ env.DEPLOY_REGION }}
+      message: "${{ global.env }} — ${{ env.DEPLOY_REGION }}"

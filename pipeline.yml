@@ -1,0 +1,27 @@
+stages:
+- step_0
+- step_1
+default:
+  image: python:3.12-slim
+  before_script:
+  - python -m pip install --disable-pip-version-check -r requirements.txt
+infra_create-gitlab:
+  stage: step_0
+  when: manual
+  allow_failure: false
+  script:
+  - python infra_to_gitlab.py infra.yml --run create-gitlab
+  artifacts:
+    paths:
+    - .infra-outputs/create-gitlab.json
+    expire_in: 1 day
+infra_job-template-launch:
+  stage: step_1
+  when: manual
+  allow_failure: true
+  script:
+  - python infra_to_gitlab.py infra.yml --run job-template-launch
+  artifacts:
+    paths:
+    - .infra-outputs/job-template-launch.json
+    expire_in: 1 day

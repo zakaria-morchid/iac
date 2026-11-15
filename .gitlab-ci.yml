@@ -1,0 +1,58 @@
+stages:
+  - validate
+  - generate
+  - run
+
+variables:
+  INFRA_DRY_RUN:
+    value: "true"
+    options:
+      - "true"
+      - "false"
+    description: "Simuler les actions du pipeline enfant. Choisir false pour les exécuter."
+
+validate-parser:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python -m pip install --disable-pip-version-check -r requirements-dev.txt .
+  script:
+    - python -m ruff check .
+    - python -m ruff format --check .
+    - python -m pylint infra_to_gitlab.py infra_actions
+    - python -m mypy
+    - python -m infra_to_gitlab validate infra.yml
+
+generate-pipeline:
+  stage: generate
+  image: python:3.12-slim
+  before_script:
+    - python -m pip install --disable-pip-version-check .
+  script:
+    - |
+      case "$INFRA_DRY_RUN" in
+        true)
+          python -m infra_to_gitlab generate infra.yml --output .gitlab-ci-generated.yml --dry-run
+          ;;
+        false)
+          python -m infra_to_gitlab generate infra.yml --output .gitlab-ci-generated.yml
+          ;;
+        *)
+          echo "INFRA_DRY_RUN must be true or false" >&2
+          exit 1
+          ;;
+      esac
+  artifacts:
+    paths:
+      - .gitlab-ci-generated.yml
+    expire_in: 1 day
+
+run-generated-pipeline:
+  stage: run
+  trigger:
+    include:
+      - artifact: .gitlab-ci-generated.yml
+        job: generate-pipeline
+    strategy: mirror
+    forward:
+      pipeline_variables: true

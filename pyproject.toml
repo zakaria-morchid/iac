@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "infra-to-gitlab"
+version = "0.1.0"
+description = "Validate infrastructure manifests and generate GitLab CI pipelines"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+
+[project.scripts]
+infra = "infra_to_gitlab:main"
+
+[tool.setuptools]
+py-modules = ["infra_to_gitlab"]
+packages = ["infra_actions"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["infra_to_gitlab.py", "infra_actions"]
+disallow_untyped_defs = true
+check_untyped_defs = true
+warn_unused_ignores = true
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.main]
+persistent = false
+
