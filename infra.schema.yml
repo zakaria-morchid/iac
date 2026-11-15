@@ -1,0 +1,58 @@
+$defs:
+  Step:
+    additionalProperties: false
+    description: Describe an executable step while keeping its inputs unrestricted.
+    properties:
+      id:
+        pattern: ^[A-Za-z0-9_-]+$
+        title: Id
+        type: string
+      name:
+        anyOf:
+        - minLength: 1
+          type: string
+        - type: 'null'
+        default: null
+        title: Name
+      action:
+        minLength: 1
+        title: Action
+        type: string
+      manual:
+        default: false
+        title: Manual
+        type: boolean
+      allow_failure:
+        default: false
+        title: Allow Failure
+        type: boolean
+      enabled:
+        default: true
+        title: Enabled
+        type: boolean
+      inputs:
+        additionalProperties: true
+        title: Inputs
+        type: object
+    required:
+    - id
+    - action
+    title: Step
+    type: object
+additionalProperties: false
+description: Validate global variables and the ordered list of steps.
+properties:
+  global:
+    additionalProperties: true
+    title: Global
+    type: object
+  steps:
+    items:
+      $ref: '#/$defs/Step'
+    minItems: 1
+    title: Steps
+    type: array
+required:
+- steps
+title: Manifest
+type: object
