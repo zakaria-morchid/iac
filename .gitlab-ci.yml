@@ -10,6 +10,9 @@ variables:
       - "true"
       - "false"
     description: "Simuler les actions du pipeline enfant. Choisir false pour les exécuter."
+  DEPLOY_REGION:
+    value: "eu-west-1"
+    description: "Région de déploiement pour les jobs Ansible."
 
 validate-parser:
   stage: validate
